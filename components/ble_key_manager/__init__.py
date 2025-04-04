@@ -1,11 +1,10 @@
+"""Componente BLE Key Manager per ESPHome."""
+
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import esp32_ble_tracker
-from esphome.const import (
-    CONF_ID,
-    CONF_INTERVAL,
-    CONF_DURATION,
-)
+from esphome.const import CONF_ID, CONF_INTERVAL, CONF_DURATION
+from esphome.automation import Action  # Importazione corretta di Action
 
 DEPENDENCIES = ['esp32_ble_tracker']
 AUTO_LOAD = ['sensor', 'text_sensor']
@@ -18,11 +17,11 @@ CONF_RESTORE_FROM_FLASH = 'restore_from_flash'
 ble_key_manager_ns = cg.esphome_ns.namespace('ble_key_manager')
 BleKeyManager = ble_key_manager_ns.class_('BleKeyManager', cg.Component, esp32_ble_tracker.ESPBTDeviceListener)
 
-# Azioni per il componente
-AddKeyAction = ble_key_manager_ns.class_('AddKeyAction', cg.Action)
-RemoveKeyAction = ble_key_manager_ns.class_('RemoveKeyAction', cg.Action)
-SetKeyStatusAction = ble_key_manager_ns.class_('SetKeyStatusAction', cg.Action)
-StartScanModeAction = ble_key_manager_ns.class_('StartScanModeAction', cg.Action)
+# Azioni per il componente - con l'importazione corretta di Action
+AddKeyAction = ble_key_manager_ns.class_('AddKeyAction', Action)
+RemoveKeyAction = ble_key_manager_ns.class_('RemoveKeyAction', Action)
+SetKeyStatusAction = ble_key_manager_ns.class_('SetKeyStatusAction', Action)
+StartScanModeAction = ble_key_manager_ns.class_('StartScanModeAction', Action)
 
 # Schemi di validazione per le azioni
 ADD_KEY_ACTION_SCHEMA = cv.Schema({
@@ -117,7 +116,7 @@ ON_KEY_DETECTED_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.use_id(BleKeyManager),
 })
 
-@cg.register_action('ble_key_manager.on_authorized_key_detected', cg.Action)
+@cg.register_action('ble_key_manager.on_authorized_key_detected', Action)
 async def ble_key_on_key_detected_to_code(config, action_id, template_arg, args):
     manager = await cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg)
