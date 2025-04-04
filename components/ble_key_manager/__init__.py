@@ -4,8 +4,7 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import esp32_ble_tracker
 from esphome.const import CONF_ID, CONF_INTERVAL, CONF_DURATION
-# Importazioni corrette per le azioni e i trigger
-from esphome.automation import Action, register_action, Trigger
+from esphome.automation import Action, Trigger
 
 DEPENDENCIES = ['esp32_ble_tracker']
 AUTO_LOAD = ['sensor', 'text_sensor']
@@ -18,7 +17,7 @@ CONF_RESTORE_FROM_FLASH = 'restore_from_flash'
 ble_key_manager_ns = cg.esphome_ns.namespace('ble_key_manager')
 BleKeyManager = ble_key_manager_ns.class_('BleKeyManager', cg.Component, esp32_ble_tracker.ESPBTDeviceListener)
 
-# Azioni per il componente - con l'importazione corretta di Action
+# Azioni per il componente
 AddKeyAction = ble_key_manager_ns.class_('AddKeyAction', Action)
 RemoveKeyAction = ble_key_manager_ns.class_('RemoveKeyAction', Action)
 SetKeyStatusAction = ble_key_manager_ns.class_('SetKeyStatusAction', Action)
@@ -56,8 +55,8 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_RESTORE_FROM_FLASH, default=True): cv.boolean,
 }).extend(esp32_ble_tracker.ESP_BLE_DEVICE_SCHEMA).extend(cv.COMPONENT_SCHEMA)
 
-# Registrazione delle azioni - utilizzo della funzione register_action corretta
-@register_action('ble_key_manager.add_key', AddKeyAction, ADD_KEY_ACTION_SCHEMA)
+# Registrazione delle azioni
+@cg.register_action('ble_key_manager.add_key', AddKeyAction, ADD_KEY_ACTION_SCHEMA)
 async def add_key_action_to_code(config, action_id, template_arg, args):
     var = cg.new_Pvariable(action_id, template_arg)
     manager = await cg.get_variable(config[CONF_ID])
@@ -74,7 +73,7 @@ async def add_key_action_to_code(config, action_id, template_arg, args):
     
     return var
 
-@register_action('ble_key_manager.remove_key', RemoveKeyAction, REMOVE_KEY_ACTION_SCHEMA)
+@cg.register_action('ble_key_manager.remove_key', RemoveKeyAction, REMOVE_KEY_ACTION_SCHEMA)
 async def remove_key_action_to_code(config, action_id, template_arg, args):
     var = cg.new_Pvariable(action_id, template_arg)
     manager = await cg.get_variable(config[CONF_ID])
@@ -85,7 +84,7 @@ async def remove_key_action_to_code(config, action_id, template_arg, args):
     
     return var
 
-@register_action('ble_key_manager.set_key_status', SetKeyStatusAction, SET_KEY_STATUS_ACTION_SCHEMA)
+@cg.register_action('ble_key_manager.set_key_status', SetKeyStatusAction, SET_KEY_STATUS_ACTION_SCHEMA)
 async def set_key_status_action_to_code(config, action_id, template_arg, args):
     var = cg.new_Pvariable(action_id, template_arg)
     manager = await cg.get_variable(config[CONF_ID])
@@ -99,7 +98,7 @@ async def set_key_status_action_to_code(config, action_id, template_arg, args):
     
     return var
 
-@register_action('ble_key_manager.start_scan_mode', StartScanModeAction, START_SCAN_MODE_ACTION_SCHEMA)
+@cg.register_action('ble_key_manager.start_scan_mode', StartScanModeAction, START_SCAN_MODE_ACTION_SCHEMA)
 async def start_scan_mode_action_to_code(config, action_id, template_arg, args):
     var = cg.new_Pvariable(action_id, template_arg)
     manager = await cg.get_variable(config[CONF_ID])
@@ -117,7 +116,7 @@ ON_KEY_DETECTED_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.use_id(BleKeyManager),
 })
 
-@register_action('ble_key_manager.on_authorized_key_detected', Action)
+@cg.register_action('ble_key_manager.on_authorized_key_detected', Action)
 async def ble_key_on_key_detected_to_code(config, action_id, template_arg, args):
     manager = await cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg)
